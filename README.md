@@ -1,3 +1,3 @@
 # data-mining
 
-random class exercices 
+data mining class project
