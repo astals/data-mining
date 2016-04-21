@@ -21,7 +21,7 @@ GetPreferencesPolicy <- function(doc) {
 #'
 #' @examples
 GetReport <- function(doc) {
-  xpath <- paste("//NessusClientData_v2/Report", sep = "")
+  xpath <- "//NessusClientData_v2/Report"
   return(XML::xpathApply(doc, xpath)[[1]])
 }
 
@@ -35,8 +35,9 @@ GetReport <- function(doc) {
 #'
 #' @examples
 GetNumberOfHosts <- function(doc) {
-  xpath <- paste("//Report/ReportHost", sep = "")
-  return(length((XML::xpathApply(doc, xpath))))
+  xml_report <- GetReport(doc)
+  xpath <- "//Report/ReportHost"
+  return(length((XML::xpathApply(xml_report, xpath))))
 }
 
 #' Gets the IP of the host 'hostnumber'
@@ -47,8 +48,10 @@ GetNumberOfHosts <- function(doc) {
 #' @export
 #'
 #' @examples
-GetIPofHostnmber <- function(doc, hostnumber=1) {
-  
+GetIPofHostnumber <- function(doc, hostnumber = 1) {
+  xml_report <- GetReport(doc)
+  xpath <- paste("//Report/ReportHost[", hostnumber ,"] /@name", sep = "")
+  return(unlist((XML::xpathApply(xml_report, xpath)))[["name"]])
 }
 
 #' Gets the XML of the given host
@@ -61,7 +64,7 @@ GetIPofHostnmber <- function(doc, hostnumber=1) {
 #'
 #' @examples
 GetXMLHost <- function(doc, hostnumber=1) {
-  xpath <- paste("//Report/ReportHost", sep = "")
+  xpath <- "//Report/ReportHost"
   return(XML::xpathApply(doc, xpath)[[hostnumber]])
 }
 
@@ -77,6 +80,21 @@ GetXMLHost <- function(doc, hostnumber=1) {
 #' @examples
 GetNumberOfVuls <- function(doc, hostnumber=1) {
   xml_host <- GetXMLHost(doc = doc, hostnumber = hostnumber)
-  xpath <- paste("//ReportItem", sep = "")
+  xpath <- "//ReportHost/ReportItem"
   return(length(XML::xpathApply(xml_host, xpath)))
+}
+
+#' Get the 
+#'
+#' @param doc 
+#' @param hostnumber 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+GetHostProperties <- function(doc, hostnumber=1) {
+  xml_host <- GetXMLHost(doc, hostnumber)
+  xpath <- "//ReportHost/HostProperties"
+  return(XML::xpathApply(xml_host, xpath))
 }
